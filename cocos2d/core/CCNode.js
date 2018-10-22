@@ -2274,7 +2274,7 @@ var Node = cc.Class({
             return cc.v2(this._sgNode.convertToNodeSpace(worldPoint));
         }
         else {
-            return this._sgNode.convertToNodeSpaceAR(worldPoint);
+            return cc.v2(this._sgNode.convertToNodeSpaceAR(worldPoint));
         }
     },
 
