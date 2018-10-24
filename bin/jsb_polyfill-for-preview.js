@@ -16881,7 +16881,7 @@
             }
           }
           true;
-          options && options.hasOwnProperty("default") ? cc.warnID(3653, propName, JS.getClassName(ctor)) : isDefaultValueSpecified || cc.warnID(3654, JS.getClassName(ctor), propName);
+          options && options.hasOwnProperty("default") ? cc.warnID(3653, propName, JS.getClassName(ctor)) : !isDefaultValueSpecified;
           cc.RawAsset.wasRawAssetType(prop.url) && prop._short && isDefaultValueSpecified && null == defaultValue && cc.warnID(3656, JS.getClassName(ctor), propName);
           prop.default = defaultValue;
         }
@@ -19480,14 +19480,11 @@
         if (!isLiteral) {
           if (Array.isArray(options) && options.length > 0) {
             var type = options[0];
-            if (true, cc.RawAsset.wasRawAssetType(type)) {
-              cc.warn("Please change the definition of property '%s' in class '%s'. Starting from v1.10,\nproperties in CCClass can not be abbreviated if they are of type RawAsset.\nPlease use the complete form.\nFor example, if property is Texture2D's url array, the previous definition is:\n    %s: [cc.Texture2D],\nNow it should be changed to:\n    %s: {\n      type: cc.Texture2D, // use 'type:' to define an array of Texture2D objects\n      default: []\n    },\n(This helps us to successfully refactor all RawAssets at v2.0, sorry for the inconvenience. \ud83d\ude30 )", propname_dev, classname_dev, propname_dev, propname_dev);
-              return {
-                default: [],
-                url: options,
-                _short: true
-              };
-            }
+            if (true, cc.RawAsset.wasRawAssetType(type)) return {
+              default: [],
+              url: options,
+              _short: true
+            };
             return {
               default: [],
               type: options,
@@ -19503,7 +19500,6 @@
                 _short: true
               };
               true;
-              cc.warn("Please change the definition of property '%s' in class '%s'. Starting from v1.10,\nproperties in CCClass can not be abbreviated if they are of type RawAsset.\nPlease use the complete form.\nFor example, if the type is Texture2D, the previous definition is:\n    %s: cc.Texture2D,\nNow it should be changed to:\n    %s: {\n      type: cc.Texture2D // use 'type:' to define Texture2D object directly\n      default: null,     // object's default value is null\n    },\n(This helps us to successfully refactor all RawAssets at v2.0, sorry for the inconvenience. \ud83d\ude30 )", propname_dev, classname_dev, propname_dev, propname_dev);
             }
             return {
               default: "",

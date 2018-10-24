@@ -100,48 +100,48 @@ function checkUrl (val, className, propName, url) {
             return cc.errorID(5504, className, propName);
         }
         if (url === cc.RawAsset) {
-            cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
-                    'the use of declaring a property in CCClass as a URL has been deprecated.\n' +
-                    'For example, if property is cc.RawAsset, the previous definition is:\n' +
-                    '    %s: cc.RawAsset,\n' +
-                    '    // or:\n' +
-                    '    %s: {\n' +
-                    '      url: cc.RawAsset,\n' +
-                    '      default: ""\n' +
-                    '    },\n' +
-                    '    // and the original method to get url is:\n' +
-                    '    `this.%s`\n' +
-                    'Now it should be changed to:\n' +
-                    '    %s: {\n' +
-                    '      type: cc.Asset,     // use \'type:\' to define Asset object directly\n' +
-                    '      default: null,      // object\'s default value is null\n' +
-                    '    },\n' +
-                    '    // and you must get the url by using:\n' +
-                    '    `this.%s.nativeUrl`\n' +
-                    '(This helps us to successfully refactor all RawAssets at v2.0, ' +
-                    'sorry for the inconvenience. \uD83D\uDE30 )',
-                    propName, className, propName, propName, propName, propName, propName);
+            // cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
+            //         'the use of declaring a property in CCClass as a URL has been deprecated.\n' +
+            //         'For example, if property is cc.RawAsset, the previous definition is:\n' +
+            //         '    %s: cc.RawAsset,\n' +
+            //         '    // or:\n' +
+            //         '    %s: {\n' +
+            //         '      url: cc.RawAsset,\n' +
+            //         '      default: ""\n' +
+            //         '    },\n' +
+            //         '    // and the original method to get url is:\n' +
+            //         '    `this.%s`\n' +
+            //         'Now it should be changed to:\n' +
+            //         '    %s: {\n' +
+            //         '      type: cc.Asset,     // use \'type:\' to define Asset object directly\n' +
+            //         '      default: null,      // object\'s default value is null\n' +
+            //         '    },\n' +
+            //         '    // and you must get the url by using:\n' +
+            //         '    `this.%s.nativeUrl`\n' +
+            //         '(This helps us to successfully refactor all RawAssets at v2.0, ' +
+            //         'sorry for the inconvenience. \uD83D\uDE30 )',
+            //         propName, className, propName, propName, propName, propName, propName);
         }
         else if (cc.isChildClassOf(url, cc.Asset)) {
             if (cc.RawAsset.wasRawAssetType(url)) {
                 if (!val._short) {
-                    cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
-                            'the use of declaring a property in CCClass as a URL has been deprecated.\n' +
-                            'For example, if property is Texture2D, the previous definition is:\n' +
-                            '    %s: cc.Texture2D,\n' +
-                            '    // or:\n' +
-                            '    %s: {\n' +
-                            '      url: cc.Texture2D,\n' +
-                            '      default: ""\n' +
-                            '    },\n' +
-                            'Now it should be changed to:\n' +
-                            '    %s: {\n' +
-                            '      type: cc.Texture2D, // use \'type:\' to define Texture2D object directly\n' +
-                            '      default: null,      // object\'s default value is null\n' +
-                            '    },\n' +
-                            '(This helps us to successfully refactor all RawAssets at v2.0, ' +
-                            'sorry for the inconvenience. \uD83D\uDE30 )',
-                            propName, className, propName, propName, propName);
+                    // cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
+                    //         'the use of declaring a property in CCClass as a URL has been deprecated.\n' +
+                    //         'For example, if property is Texture2D, the previous definition is:\n' +
+                    //         '    %s: cc.Texture2D,\n' +
+                    //         '    // or:\n' +
+                    //         '    %s: {\n' +
+                    //         '      url: cc.Texture2D,\n' +
+                    //         '      default: ""\n' +
+                    //         '    },\n' +
+                    //         'Now it should be changed to:\n' +
+                    //         '    %s: {\n' +
+                    //         '      type: cc.Texture2D, // use \'type:\' to define Texture2D object directly\n' +
+                    //         '      default: null,      // object\'s default value is null\n' +
+                    //         '    },\n' +
+                    //         '(This helps us to successfully refactor all RawAssets at v2.0, ' +
+                    //         'sorry for the inconvenience. \uD83D\uDE30 )',
+                    //         propName, className, propName, propName, propName);
                 }
             }
             else {
@@ -221,19 +221,19 @@ exports.getFullFormOfProperty = function (options, propname_dev, classname_dev) 
             var type = options[0];
             if (CC_DEV && cc.RawAsset.wasRawAssetType(type)) {
                 // deprecate `myProp: [cc.Texture2D]` since 1.10
-                cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
-                        'properties in CCClass can not be abbreviated if they are of type RawAsset.\n' +
-                        'Please use the complete form.\n' +
-                        'For example, if property is Texture2D\'s url array, the previous definition is:\n' +
-                        '    %s: [cc.Texture2D],\n' +
-                        'Now it should be changed to:\n' +
-                        '    %s: {\n' +
-                        '      type: cc.Texture2D, // use \'type:\' to define an array of Texture2D objects\n' +
-                        '      default: []\n' +
-                        '    },\n' +
-                        '(This helps us to successfully refactor all RawAssets at v2.0, ' +
-                        'sorry for the inconvenience. \uD83D\uDE30 )',
-                        propname_dev, classname_dev, propname_dev, propname_dev);
+                // cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
+                //         'properties in CCClass can not be abbreviated if they are of type RawAsset.\n' +
+                //         'Please use the complete form.\n' +
+                //         'For example, if property is Texture2D\'s url array, the previous definition is:\n' +
+                //         '    %s: [cc.Texture2D],\n' +
+                //         'Now it should be changed to:\n' +
+                //         '    %s: {\n' +
+                //         '      type: cc.Texture2D, // use \'type:\' to define an array of Texture2D objects\n' +
+                //         '      default: []\n' +
+                //         '    },\n' +
+                //         '(This helps us to successfully refactor all RawAssets at v2.0, ' +
+                //         'sorry for the inconvenience. \uD83D\uDE30 )',
+                //         propname_dev, classname_dev, propname_dev, propname_dev);
                 return {
                     default: [],
                     url: options,
@@ -252,19 +252,19 @@ exports.getFullFormOfProperty = function (options, propname_dev, classname_dev) 
                 if (cc.RawAsset.wasRawAssetType(type)) {
                     // deprecate `myProp: cc.Texture2D` since 1.10
                     if (CC_DEV) {
-                        cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
-                                'properties in CCClass can not be abbreviated if they are of type RawAsset.\n' +
-                                'Please use the complete form.\n' +
-                                'For example, if the type is Texture2D, the previous definition is:\n' +
-                                '    %s: cc.Texture2D,\n' +
-                                'Now it should be changed to:\n' +
-                                '    %s: {\n' +
-                                '      type: cc.Texture2D // use \'type:\' to define Texture2D object directly\n' +
-                                '      default: null,     // object\'s default value is null\n' +
-                                '    },\n' +
-                                '(This helps us to successfully refactor all RawAssets at v2.0, ' +
-                                'sorry for the inconvenience. \uD83D\uDE30 )',
-                                propname_dev, classname_dev, propname_dev, propname_dev);
+                        // cc.warn('Please change the definition of property \'%s\' in class \'%s\'. Starting from v1.10,\n' +
+                        //         'properties in CCClass can not be abbreviated if they are of type RawAsset.\n' +
+                        //         'Please use the complete form.\n' +
+                        //         'For example, if the type is Texture2D, the previous definition is:\n' +
+                        //         '    %s: cc.Texture2D,\n' +
+                        //         'Now it should be changed to:\n' +
+                        //         '    %s: {\n' +
+                        //         '      type: cc.Texture2D // use \'type:\' to define Texture2D object directly\n' +
+                        //         '      default: null,     // object\'s default value is null\n' +
+                        //         '    },\n' +
+                        //         '(This helps us to successfully refactor all RawAssets at v2.0, ' +
+                        //         'sorry for the inconvenience. \uD83D\uDE30 )',
+                        //         propname_dev, classname_dev, propname_dev, propname_dev);
                     }
                 }
                 else {
