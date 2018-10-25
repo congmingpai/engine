@@ -74062,7 +74062,7 @@
       };
       var b2RUBELoader = (function() {
         function parseVector(obj) {
-          return new b2Vec2(obj ? obj.x || 0 : 0, obj ? obj.y || 0 : 0);
+          return new b2Vec2(obj && obj.x || 0, obj && obj.y || 0);
         }
         function parseVectorArray(obj) {
           var vals = new Array(obj.x.length);
