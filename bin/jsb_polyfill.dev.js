@@ -19765,7 +19765,6 @@
           }
         },
         destroy: function() {
-          this._releaseTexture();
           cc.textureCache.removeTextureForKey(this.url);
           this._super();
         },
