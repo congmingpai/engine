@@ -5481,7 +5481,6 @@
           return;
         }
         if (this._element) return;
-        if (this._element) return;
         var item = cc.loader.getItem(src);
         item || (item = cc.loader.getItem(src + "?useDom=1"));
         if (!item || !item.complete) return cc.loader.load(src, (function(error) {
@@ -5503,7 +5502,6 @@
       };
       proto.mount = function(elem) {
         if (elem instanceof HTMLElement) {
-          false, false;
           this._element = document.createElement("audio");
           this._element.src = elem.src;
           this._audioType = Audio.Type.DOM;
@@ -9471,29 +9469,38 @@
         this._rendererInitialized = true;
       },
       _initEvents: function() {
-        var win = window, hidden, visibilityChange, _undef = "undefined";
+        var win = window, hiddenPropName;
         this.config[this.CONFIG_KEY.registerSystemEvent] && inputManager.registerSystemEvent(this.canvas);
-        "undefined" !== typeof document.hidden ? hidden = "hidden" : "undefined" !== typeof document.mozHidden ? hidden = "mozHidden" : "undefined" !== typeof document.msHidden ? hidden = "msHidden" : "undefined" !== typeof document.webkitHidden && (hidden = "webkitHidden");
-        var changeList = [ "visibilitychange", "mozvisibilitychange", "msvisibilitychange", "webkitvisibilitychange", "qbrowserVisibilityChange" ];
-        var onHidden = function() {
-          game.emit(game.EVENT_HIDE, game);
-        };
-        var onShow = function() {
-          game.emit(game.EVENT_SHOW, game);
-        };
-        if (hidden) for (var i = 0; i < changeList.length; i++) document.addEventListener(changeList[i], (function(event) {
-          var visible = document[hidden];
-          visible = visible || event["hidden"];
-          visible ? onHidden() : onShow();
-        }), false); else {
-          win.addEventListener("blur", onHidden, false);
-          win.addEventListener("focus", onShow, false);
+        "undefined" !== typeof document.hidden ? hiddenPropName = "hidden" : "undefined" !== typeof document.mozHidden ? hiddenPropName = "mozHidden" : "undefined" !== typeof document.msHidden ? hiddenPropName = "msHidden" : "undefined" !== typeof document.webkitHidden && (hiddenPropName = "webkitHidden");
+        var hidden = false;
+        function onHidden() {
+          if (!hidden) {
+            hidden = true;
+            game.emit(game.EVENT_HIDE, game);
+          }
         }
-        navigator.userAgent.indexOf("MicroMessenger") > -1 && (win.onfocus = onShow);
+        function onShown() {
+          if (hidden) {
+            hidden = false;
+            game.emit(game.EVENT_SHOW, game);
+          }
+        }
+        if (hiddenPropName) {
+          var changeList = [ "visibilitychange", "mozvisibilitychange", "msvisibilitychange", "webkitvisibilitychange", "qbrowserVisibilityChange" ];
+          for (var i = 0; i < changeList.length; i++) document.addEventListener(changeList[i], (function(event) {
+            var visible = document[hiddenPropName];
+            visible = visible || event["hidden"];
+            visible ? onHidden() : onShown();
+          }), false);
+        } else {
+          win.addEventListener("blur", onHidden, false);
+          win.addEventListener("focus", onShown, false);
+        }
+        navigator.userAgent.indexOf("MicroMessenger") > -1 && (win.onfocus = onShown);
         false;
         if ("onpageshow" in window && "onpagehide" in window) {
           win.addEventListener("pagehide", onHidden, false);
-          win.addEventListener("pageshow", onShow, false);
+          win.addEventListener("pageshow", onShown, false);
         }
         this.on(game.EVENT_HIDE, (function() {
           game.pause();
@@ -20394,7 +20401,7 @@
             defaultValue: editBox._text,
             maxLength: 140,
             multiple: multiline,
-            confirmHold: true,
+            confirmHold: false,
             confirmType: "done",
             success: function(res) {
               editBox._delegate && editBox._delegate.editBoxEditingDidBegan && editBox._delegate.editBoxEditingDidBegan(editBox);
@@ -20483,6 +20490,7 @@
       proto._updateDomTextCases = function() {
         var inputFlag = this._editBox._editBoxInputFlag;
         inputFlag === InputFlag.INITIAL_CAPS_ALL_CHARACTERS ? this._editBox._text = this._editBox._text.toUpperCase() : inputFlag === InputFlag.INITIAL_CAPS_WORD ? this._editBox._text = capitalize(this._editBox._text) : inputFlag === InputFlag.INITIAL_CAPS_SENTENCE && (this._editBox._text = capitalizeFirstLetter(this._editBox._text));
+        this._edTxt && (this._edTxt.value = this._editBox._text);
       };
       proto._updateLabelStringStyle = function() {
         if ("password" === this._edTxt.type) {
@@ -24150,6 +24158,11 @@
       _isItalic: false,
       _isUnderline: false,
       _fontAsset: null,
+      onExit: function() {
+        this._super();
+        this._renderCmd._texture.releaseTexture();
+        this._notifyLabelSkinDirty();
+      },
       ctor: function(string, fontAsset) {
         EventTarget.call(this);
         var isAsset = fontAsset instanceof cc.Font;
@@ -24895,12 +24908,10 @@
       label._fontHandle = "";
       label._labelType = 0;
       label._resetBMFont();
-      label._renderCmd._texture.releaseTexture();
       true;
       cc.assert(!label._parent, "Recycling label's parent should be null!");
-      label._updateLabel();
       return true;
-    }, 120);
+    }, 10);
     _ccsg.Label.pool.get = function(string, fontAsset) {
       var label = this._get();
       if (label) {
@@ -26112,7 +26123,7 @@
       dom.src = item.url;
       if (sys.platform === sys.WECHAT_GAME) {
         item.element = dom;
-        callback(null, item.url);
+        callback(null, item.id);
         return;
       }
       var clearEvent = function() {
@@ -26501,7 +26512,7 @@
       }
     }
     function loadImage(item, callback) {
-      if (sys.platform !== sys.WECHAT_GAME && sys.platform !== sys.QQ_PLAY && !(item.content instanceof Image)) return new Error("Image Loader: Input item doesn't contain Image content");
+      if (sys.platform !== sys.WECHAT_GAME && sys.platform !== sys.QQ_PLAY && sys.platform !== sys.FB_PLAYABLE_ADS && !(item.content instanceof Image)) return new Error("Image Loader: Input item doesn't contain Image content");
       var rawUrl = item.rawUrl;
       var tex = cc.textureCache.getTextureForKey(rawUrl) || new Texture2D();
       tex.url = rawUrl;
@@ -31070,6 +31081,7 @@
     var eventManager = require("../event-manager");
     var inputManager = require("./CCInputManager");
     inputManager.__instanceId = cc.ClassManager.getNewInstanceId();
+    var _didAccelerateFun;
     inputManager.setAccelerometerEnabled = function(isEnable) {
       var _t = this;
       if (_t._accelEnabled === isEnable) return;
@@ -31106,7 +31118,13 @@
       var _deviceEventType = _t._accelDeviceEvent === w.DeviceMotionEvent ? "devicemotion" : "deviceorientation";
       var ua = navigator.userAgent;
       (/Android/.test(ua) || /Adr/.test(ua) && cc.sys.browserType === cc.BROWSER_TYPE_UC) && (_t._minus = -1);
-      w.addEventListener(_deviceEventType, _t.didAccelerate.bind(_t), false);
+      _didAccelerateFun = _t.didAccelerate.bind(_t);
+      w.addEventListener(_deviceEventType, _didAccelerateFun, false);
+    };
+    inputManager._unregisterAccelerometerEvent = function() {
+      var w = window, _t = this;
+      var _deviceEventType = _t._accelDeviceEvent === w.DeviceMotionEvent ? "devicemotion" : "deviceorientation";
+      _didAccelerateFun && w.removeEventListener(_deviceEventType, _didAccelerateFun, false);
     };
     inputManager.didAccelerate = function(eventData) {
       var _t = this, w = window;
@@ -31550,7 +31568,7 @@
       cc.warnID(1405, "cc.inputManager", "cc.systemEvent");
       return inputManager;
     }));
-    module.exports = inputManager;
+    module.exports = _cc.inputManager = inputManager;
   }), {
     "../event-manager": 110,
     "../platform/js": 197,
@@ -32095,7 +32113,7 @@
         var i, l, val, map = this._fnMap, valL;
         for (i = 0, l = map.length; i < l; i++) {
           val = map[i];
-          if (val && val[1] in document) {
+          if (val && "undefined" !== typeof document[val[1]]) {
             for (i = 0, valL = val.length; i < valL; i++) this._fn[map[0][i]] = val[i];
             break;
           }
@@ -32188,6 +32206,7 @@
     sys.EDITOR_CORE = 103;
     sys.WECHAT_GAME = 104;
     sys.QQ_PLAY = 105;
+    sys.FB_PLAYABLE_ADS = 106;
     sys.BROWSER_TYPE_WECHAT = "wechat";
     sys.BROWSER_TYPE_WECHAT_GAME = "wechatgame";
     sys.BROWSER_TYPE_WECHAT_GAME_SUB = "wechatgamesub";
@@ -32241,6 +32260,7 @@
       false;
       sys.isMobile = /mobile|android|iphone|ipad/.test(ua);
       sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
+      void 0 !== typeof FbPlayableAd && (sys.platform = sys.FB_PLAYABLE_ADS);
       var currLanguage = nav.language;
       currLanguage = currLanguage || nav.browserLanguage;
       currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
@@ -38677,7 +38697,7 @@
           _p._setImage = function(img, width, height, glFmt, premultiplyAlpha) {
             var gl = this._gl;
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiplyAlpha);
-            sys.platform === sys.WECHAT_GAME && !(img instanceof Uint8Array) || sys.platform === sys.QQ_PLAY || img instanceof HTMLCanvasElement || img instanceof HTMLImageElement || img instanceof HTMLVideoElement ? gl.texImage2D(gl.TEXTURE_2D, 0, glFmt.internalFormat, glFmt.format, glFmt.pixelType, img) : gl.texImage2D(gl.TEXTURE_2D, 0, glFmt.internalFormat, width, height, 0, glFmt.format, glFmt.pixelType, img);
+            sys.platform === sys.QQ_PLAY || img instanceof HTMLCanvasElement && !(img instanceof Uint8Array) || img instanceof HTMLImageElement || img instanceof HTMLVideoElement ? gl.texImage2D(gl.TEXTURE_2D, 0, glFmt.internalFormat, glFmt.format, glFmt.pixelType, img) : gl.texImage2D(gl.TEXTURE_2D, 0, glFmt.internalFormat, width, height, 0, glFmt.format, glFmt.pixelType, img);
           };
           _p._setTexInfo = function() {
             var gl = this._gl;
@@ -41405,7 +41425,8 @@
       return Math.acos(theta);
     };
     proto.signAngle = function(vector) {
-      return Math.atan2(this.y, this.x) - Math.atan2(vector.y, vector.x);
+      var angle = this.angle(vector);
+      return this.cross(vector) < 0 ? -angle : angle;
     };
     proto.rotate = function(radians, out) {
       out = out || new Vec2();
@@ -41505,10 +41526,10 @@
         return this._renderCmd.isPlaying();
       },
       duration: function() {
-        return this._renderCmd.duration();
+        return this._renderCmd.duration() || -1;
       },
       currentTime: function() {
-        return this._renderCmd.currentTime();
+        return this._renderCmd.currentTime() || -1;
       },
       createDomElementIfNeeded: function() {
         this._renderCmd._video || this._renderCmd.createDom();
@@ -41663,7 +41684,7 @@
         cc.loader.md5Pipe && (path = cc.loader.md5Pipe.transformURL(path));
         var source, video, extname;
         var node = this._node;
-        if (this._url == path) return;
+        if (this._url === path) return;
         this._url = path;
         cc.loader.resPath && !/^http/.test(path) && (path = cc.path.join(cc.loader.resPath, path));
         this.removeDom();
@@ -41671,7 +41692,7 @@
         this.bindEvent();
         video = this._video;
         var cb = function() {
-          if (true == this._loaded) return;
+          if (this._loaded) return;
           this._loaded = true;
           node.setContentSize(node._contentSize.width, node._contentSize.height);
           video.currentTime = 0;
@@ -51810,10 +51831,10 @@
       },
       _parseDragonAsset: function() {
         if (this.dragonAsset) {
-          false;
           var jsonObj = JSON.parse(this.dragonAsset.dragonBonesJson);
           var data = this._factory.getDragonBonesData(jsonObj.name);
           if (data) {
+            true;
             var armature, dragonBonesData;
             for (var i = 0, len = jsonObj.armature.length; i < len; i++) {
               armature = jsonObj.armature[i];
@@ -51823,9 +51844,10 @@
               }
             }
             this._dragonBonesData = data;
-            return;
+          } else {
+            false;
+            this._dragonBonesData = this._factory.parseDragonBonesData(jsonObj);
           }
-          this._dragonBonesData = this._factory.parseDragonBonesData(jsonObj);
         }
       },
       _parseDragonAtlasAsset: function() {
@@ -52360,10 +52382,7 @@
       },
       _onClear: function() {
         dragonBones.TextureData.prototype._onClear.call(this);
-        if (this.texture) {
-          this.texture.dispose();
-          this.texture = null;
-        }
+        this.texture && (this.texture = null);
       }
     });
   }), {} ],
@@ -78310,6 +78329,7 @@
     defineMacro("CC_SUPPORT_JIT", !(false, false));
     cc = {};
     _ccsg = {};
+    _cc = {};
     true;
     cc._Test = {};
     require("./CCDebugger");

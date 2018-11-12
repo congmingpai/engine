@@ -12698,7 +12698,7 @@
         }
       }
       function loadImage(item, callback) {
-        if (sys.platform !== sys.WECHAT_GAME && sys.platform !== sys.QQ_PLAY && !(item.content instanceof Image)) return new Error("Image Loader: Input item doesn't contain Image content");
+        if (sys.platform !== sys.WECHAT_GAME && sys.platform !== sys.QQ_PLAY && sys.platform !== sys.FB_PLAYABLE_ADS && !(item.content instanceof Image)) return new Error("Image Loader: Input item doesn't contain Image content");
         var rawUrl = item.rawUrl;
         var tex = cc.textureCache.getTextureForKey(rawUrl) || new Texture2D();
         tex.url = rawUrl;
@@ -17491,6 +17491,7 @@
       sys.EDITOR_CORE = 103;
       sys.WECHAT_GAME = 104;
       sys.QQ_PLAY = 105;
+      sys.FB_PLAYABLE_ADS = 106;
       sys.BROWSER_TYPE_WECHAT = "wechat";
       sys.BROWSER_TYPE_WECHAT_GAME = "wechatgame";
       sys.BROWSER_TYPE_WECHAT_GAME_SUB = "wechatgamesub";
@@ -17545,6 +17546,7 @@
         false;
         sys.isMobile = /mobile|android|iphone|ipad/.test(ua);
         sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
+        void 0 !== (__typeofVal = typeof FbPlayableAd, "object" === __typeofVal ? __realTypeOfObj(FbPlayableAd) : __typeofVal) && (sys.platform = sys.FB_PLAYABLE_ADS);
         var currLanguage = nav.language;
         currLanguage = currLanguage || nav.browserLanguage;
         currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
@@ -21958,7 +21960,8 @@
         return Math.acos(theta);
       };
       proto.signAngle = function(vector) {
-        return Math.atan2(this.y, this.x) - Math.atan2(vector.y, vector.x);
+        var angle = this.angle(vector);
+        return this.cross(vector) < 0 ? -angle : angle;
       };
       proto.rotate = function(radians, out) {
         out = out || new Vec2();
@@ -23812,12 +23815,17 @@
         },
         _parseDragonAsset: function() {
           if (this.dragonAsset) {
-            var jsonObj;
-            var data;
-            var armature, dragonBonesData;
-            var i, len;
-            true;
-            this._dragonBonesData = this._factory.parseDragonBonesData(this.dragonAsset.dragonBonesJson);
+            var jsonObj = JSON.parse(this.dragonAsset.dragonBonesJson);
+            var data = this._factory.getDragonBonesData(jsonObj.name);
+            if (data) {
+              var armature, dragonBonesData;
+              var i, len;
+              false;
+              this._dragonBonesData = data;
+            } else {
+              true;
+              this._dragonBonesData = this._factory.parseDragonBonesData(this.dragonAsset.dragonBonesJson);
+            }
           }
         },
         _parseDragonAtlasAsset: function() {
