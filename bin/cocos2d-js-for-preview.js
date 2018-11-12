@@ -30911,7 +30911,7 @@
           }
         }
         true;
-        options && options.hasOwnProperty("default") ? cc.warnID(3653, propName, JS.getClassName(ctor)) : isDefaultValueSpecified || cc.warnID(3654, propName);
+        options && options.hasOwnProperty("default") ? cc.warnID(3653, propName, JS.getClassName(ctor)) : !isDefaultValueSpecified;
         prop.default = defaultValue;
       }
       properties[propName] = prop;
