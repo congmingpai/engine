@@ -932,7 +932,7 @@ _ccsg.EditBox.KeyboardReturnType = KeyboardReturnType;
                 defaultValue: editBox._text,
                 maxLength: 140,
                 multiple: multiline,
-                confirmHold: true,
+                confirmHold: false,  // hide keyboard mannually by wx.onKeyboardConfirm
                 confirmType: "done",
                 success: function (res) {
                     editBox._delegate && editBox._delegate.editBoxEditingDidBegan && editBox._delegate.editBoxEditingDidBegan(editBox);
@@ -1048,6 +1048,9 @@ _ccsg.EditBox.KeyboardReturnType = KeyboardReturnType;
         }
         else if (inputFlag === InputFlag.INITIAL_CAPS_SENTENCE) {
             this._editBox._text = capitalizeFirstLetter(this._editBox._text);
+        }
+        if (this._edTxt) {
+            this._edTxt.value = this._editBox._text;
         }
     };
 

@@ -611,4 +611,4 @@ js.get(cc, 'inputManager', function () {
     return inputManager;
 });
 
-module.exports = inputManager;
+module.exports = _cc.inputManager = inputManager;

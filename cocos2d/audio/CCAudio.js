@@ -96,9 +96,6 @@ Audio.State = {
             this._loaded = false;
             return;
         }
-        
-        if (this._element)
-            return;
 
         if (this._element)
             return;
@@ -145,14 +142,9 @@ Audio.State = {
 
     proto.mount = function (elem) {
         if (elem instanceof HTMLElement) {
-            if (CC_QQPLAY || CC_WECHATGAME) {
-                this._element = elem;
-            }
-            else {
-                this._element = document.createElement('audio');
-                this._element.src = elem.src;
-                this._audioType = Audio.Type.DOM;
-            }
+            this._element = document.createElement('audio');
+            this._element.src = elem.src;
+            this._audioType = Audio.Type.DOM;
         } else {
             this._element = new WebAudioElement(elem, this);
             this._audioType = Audio.Type.WEBAUDIO;
