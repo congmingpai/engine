@@ -149,7 +149,7 @@ var proto = EventTarget.prototype;
 
 proto._addEventFlag = function (type, listeners, useCapture) {
     var cache = this._hasListenerCache;
-    
+
     if (!cache) {
         cache = this._hasListenerCache = cc.js.createMap();
     }
@@ -157,14 +157,14 @@ proto._addEventFlag = function (type, listeners, useCapture) {
     if (cache[type] === undefined) {
         cache[type] = 0;
     }
-    
+
     var flag = useCapture ? CAPTURING_FLAG : BUBBLING_FLAG;
     cache[type] |= flag;
 };
 
 proto._purgeEventFlag = function (type, listeners, useCapture) {
     var cache = this._hasListenerCache;
-    
+
     if (!cache || listeners.has(type)) {
         return;
     }
@@ -182,7 +182,7 @@ proto._resetFlagForTarget = function (target, listeners, useCapture) {
     if (!cache) {
         return;
     }
-    
+
     var flag = useCapture ? CAPTURING_FLAG : BUBBLING_FLAG;
     for (var key in cache) {
         if (!listeners.has(key)) {
@@ -319,7 +319,7 @@ proto.off = function (type, callback, target, useCapture) {
 
             this._purgeEventFlag(type, listeners, useCapture);
         }
-        
+
     }
 };
 
@@ -434,16 +434,24 @@ proto.emit = function (message, detail) {
     event.eventPhase = 2;
     event.target = event.currentTarget = this;
 
+    var res;
     var capturingListeners = this._capturingListeners;
     if (capturingListeners && (flag & CAPTURING_FLAG)) {
-        capturingListeners.invoke(event);
+        res = capturingListeners.invoke(event);
     }
     var bubblingListeners = this._bubblingListeners;
     if (bubblingListeners && (flag & BUBBLING_FLAG) && !event._propagationImmediateStopped) {
-        bubblingListeners.invoke(event);
+        res = bubblingListeners.invoke(event);
     }
-    event.detail = null;
-    cc.Event.EventCustom.put(event);
+    if (typeof res.finally === 'function') {
+        res.finally(function() {
+            event.detail = null;
+            cc.Event.EventCustom.put(event);
+        });
+    } else {
+        event.detail = null;
+        cc.Event.EventCustom.put(event);
+    }
 };
 
 /*
