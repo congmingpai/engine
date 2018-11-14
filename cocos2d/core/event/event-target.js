@@ -443,7 +443,7 @@ proto.emit = function (message, detail) {
     if (bubblingListeners && (flag & BUBBLING_FLAG) && !event._propagationImmediateStopped) {
         res = bubblingListeners.invoke(event);
     }
-    if (typeof res.finally === 'function') {
+    if (res && typeof res.finally === 'function') {
         res.finally(function() {
             event.detail = null;
             cc.Event.EventCustom.put(event);
