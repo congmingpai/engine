@@ -10334,10 +10334,10 @@ type: "uuid",
 uuid: t
 };
 }));
-this.load(r, e, (function(t, e) {
+o.load(r, e, (function(t, e) {
 if (i) {
 for (var s = [], c = n && [], a = 0; a < r.length; ++a) {
-var l = r[a].uuid, h = this._getReferenceKey(l), u = e.getContent(h);
+var l = r[a].uuid, h = o._getReferenceKey(l), u = e.getContent(h);
 if (u) {
 o.setAutoReleaseRecursively(l, !1);
 s.push(u);

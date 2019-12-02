@@ -25819,13 +25819,13 @@
             uuid: uuid
           };
         }));
-        this.load(res, progressCallback, (function(errors, items) {
+        self.load(res, progressCallback, (function(errors, items) {
           if (completeCallback) {
             var assetRes = [];
             var urlRes = urls && [];
             for (var i = 0; i < res.length; ++i) {
               var uuid = res[i].uuid;
-              var id = this._getReferenceKey(uuid);
+              var id = self._getReferenceKey(uuid);
               var item = items.getContent(id);
               if (item) {
                 self.setAutoReleaseRecursively(uuid, false);
