@@ -1208,14 +1208,14 @@ var BaseNode = cc.Class({
         var children = this._children;
         for (i = 0, len = children.length; i < len; ++i) {
             // destroy immediate so its _onPreDestroy can be called
-            children[i]._destroyImmediate();
+            children[i] && children[i]._destroyImmediate();
         }
 
         // destroy self components
         for (i = 0, len = this._components.length; i < len; ++i) {
             var component = this._components[i];
             // destroy immediate so its _onPreDestroy can be called
-            component._destroyImmediate();
+            component && component._destroyImmediate();
         }
 
         var eventTargets = this.__eventTargets;
