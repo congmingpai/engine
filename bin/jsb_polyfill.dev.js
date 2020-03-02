@@ -19843,10 +19843,10 @@
           var destroyByParent = parent && parent._objFlags & Destroying;
           !destroyByParent && (false, false) && this._registerIfAttached(false);
           var children = this._children;
-          for (i = 0, len = children.length; i < len; ++i) children[i]._destroyImmediate();
+          for (i = 0, len = children.length; i < len; ++i) children[i] && children[i]._destroyImmediate();
           for (i = 0, len = this._components.length; i < len; ++i) {
             var component = this._components[i];
-            component._destroyImmediate();
+            component && component._destroyImmediate();
           }
           var eventTargets = this.__eventTargets;
           for (i = 0, len = eventTargets.length; i < len; ++i) {
