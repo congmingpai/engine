@@ -2,16 +2,7 @@ const ES = require('event-stream');
 const Path = require('path');
 
 const getRealTypeOfObj = (function __realTypeOfObj (obj) {
-    if (obj) {
-        if (obj.toString) {
-            if (obj.toString() === '[object CallbackConstructor]')
-                return 'function';
-        }
-        else {
-            // "Cannot convert object to primitive value"
-        }
-    }
-    return 'object';
+    return obj && obj.constructor === Function ? "function" : "object";
 }).toString();
 
 const TYPEOF_SHIM = `\n${getRealTypeOfObj}\nvar __typeofVal = "";`;

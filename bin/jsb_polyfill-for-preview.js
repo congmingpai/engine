@@ -27150,8 +27150,7 @@
     }), {} ]
   }, {}, [ 183 ]);
   function __realTypeOfObj(obj) {
-    if (obj && obj.toString && "[object CallbackConstructor]" === obj.toString()) return "function";
-    return "object";
+    return obj && obj.constructor === Function ? "function" : "object";
   }
   var __typeofVal = "";
 })();
