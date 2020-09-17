@@ -1,6 +1,6 @@
 (function() {
 function t(t) {
-return t && t.toString && "[object CallbackConstructor]" === t.toString() ? "function" : "object";
+return t && t.constructor === Function ? "function" : "object";
 }
 (function(i, n, o) {
 function r(o, c) {
