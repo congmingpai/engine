@@ -17014,20 +17014,21 @@ this._objFlags |= _;
 var i = this._parent, n = i && i._objFlags & _;
 0;
 var o = this._children;
-for (t = 0, e = o.length; t < e; ++t) o[t]._destroyImmediate();
+for (t = 0, e = o.length; t < e; ++t) o[t] && o[t]._destroyImmediate();
 for (t = 0, e = this._components.length; t < e; ++t) {
-this._components[t]._destroyImmediate();
+var r = this._components[t];
+r && r._destroyImmediate();
 }
-var r = this.__eventTargets;
-for (t = 0, e = r.length; t < e; ++t) {
-var s = r[t];
-s && s.targetOff(this);
+var s = this.__eventTargets;
+for (t = 0, e = s.length; t < e; ++t) {
+var c = s[t];
+c && c.targetOff(this);
 }
-r.length = 0;
+s.length = 0;
 this._persistNode && cc.game.removePersistRootNode(this);
 if (!n && i) {
-var c = i._children.indexOf(this);
-i._children.splice(c, 1);
+var a = i._children.indexOf(this);
+i._children.splice(a, 1);
 i.emit("child-removed", this);
 }
 return n;
